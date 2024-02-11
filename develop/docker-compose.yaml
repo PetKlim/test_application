@@ -1,0 +1,37 @@
+services:
+  app:
+    build:
+      context: ./
+    container_name: bank_app
+    volumes:
+      - ../BankApplication:/home/BankApplication
+      - /tmp/docker_reports/:/tmp/docker_reports
+    command:
+        ["init"]
+    networks:
+      - default
+    ports:
+        - "127.0.0.1:8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    links:
+      - db
+    restart: always
+
+  db:
+    image: postgres:16.1-alpine
+    container_name: "bank_db"
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+    ports:
+      - 127.0.0.1:5432:5432
+    environment:
+      POSTGRES_PASSWORD: bank_app
+      POSTGRES_USER: bank_app
+      POSTGRES_DB: application
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U bank_app -d application" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
