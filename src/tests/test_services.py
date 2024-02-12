@@ -29,4 +29,4 @@ def test__get_manufactures_by_app_id__empty():
     manufactures = get_manufactures(123)
     assert Manufacture.objects.all().count() == 2
     assert Product.objects.all().count() == 4
-    assert manufactures['manufacture_id'] == []
+    assert manufactures['manufacture_id'].count() == 0
